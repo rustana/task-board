@@ -1,37 +1,29 @@
 import React from 'react';
-import List from "./List";
+import {useSortable} from "@dnd-kit/sortable";
+import {CSS} from "@dnd-kit/utilities";
 
-const Card = ({list, setList, priorityList, selectedPriorityTemplate,priorityOptionTemplate}) => {
-    const updateTask = (oldTask, newTask) => {
-        console.log("oldTask", oldTask)
-        console.log("newTask", newTask)
-        const matchedPriority = priorityList.find(priority => priority.value === newTask.priority);
-        const updatedTask =
-            matchedPriority!==undefined
-                ?{...newTask,color:matchedPriority.color}
-                :{...newTask}
+const Card = ({item, key, setSelectedTask}) => {
 
-        setList(list.map(task => (task.name === oldTask.name ? updatedTask : task)));
-    };
-    const deleteTask = (taskToDelete) => {
-        let updatedList = list.filter((task) => task.name !== taskToDelete.name)
-        setList(updatedList)
-    }
-
+    const {attributes, listeners, setNodeRef, transform, transition} = useSortable({
+        id:item.id})
+    const style = {transition, transform: CSS.Transform.toString(transform)}
 
     return (
+        <div>
+            < div
+                ref={setNodeRef}
+                  {...attributes}
+                  {...listeners}
+                  style={style}>
+                <li key={key} className="list-item"
+                    onDoubleClick={() =>
+                    setSelectedTask(item)
+                }>
+                    {item.name}
+                    <div className="priority" style={{background: item.color}}></div>
+                </li>
 
-    <div  className="card" >
-
-            <List
-                list={list}
-                updateTask={updateTask}
-                deleteTask={deleteTask}
-                priorityList={priorityList}
-                selectedPriorityTemplate={selectedPriorityTemplate}
-                priorityOptionTemplate={priorityOptionTemplate}
-            />
-
+            </div>
         </div>
     );
 };

@@ -28,34 +28,35 @@ const Header = ({
     const [visibleCreateTask, setVisibleCreateTask] = useState(false);
     const [name, setName] = useState("")
     const [date, setDate] = useState(null)
-    const [description, setDescription] = useState(null)
+    const [description, setDescription] = useState('')
     const [selectedColumnList, setSelectedColumnList] = useState([]);
     const [selectedPriority, setSelectedPriority] = useState(null)
-
-    const addTask = (name, description, date, priority) => {
-        const newTask = {id:uuidv4(), name: name, description: description, date: date, priority: priority}
+    console.log(visibleDeleteColumn)
+    const addTask = (name, status, description, date, priority) => {
+        const newTask = {id:uuidv4(), name: name, status:"To Do",description: description, date: date, priority: priority}
         const matchedPriority = priorityList.find(priority => priority.value === newTask.priority);
         const updatedTask =
         matchedPriority!==undefined
             ?{...newTask,color:matchedPriority.color}
             :{...newTask}
-
-        console.log(newTask)
         setList([...list, updatedTask])
         setName("")
         setDate("")
         setDescription("")
         setSelectedPriority(null)
         setVisibleCreateTask(false)
+        console.log(updatedTask)
     }
     const handleAddColumnSubmit = () => {
-        addColumn(columnName)
+        addColumn({id:uuidv4,name:columnName})
         setVisibleCreateColumn(false)
         setColumnName("")
     }
 
     const updateDeleteColumnList = (columnName) => {
-        if (selectedColumnList.includes(columnName)) {
+        console.log(columnName)
+        console.log(selectedColumnList)
+        if (selectedColumnList.some(col=>col.name===columnName.name)) {
             const updated = selectedColumnList.filter(column => column !== columnName)
             setSelectedColumnList(updated)
 
@@ -83,8 +84,8 @@ const Header = ({
                     <InputText value={name} onChange={(e) => setName(e.target.value)}/>
                     <label htmlFor="task-description">Description</label>
                     <InputTextarea value={description} onChange={(e) => setDescription(e.target.value)}/>
-                    <div className="card flex justify-content-center">
-                        <Dropdown value={selectedPriority} onChange={(e) => {
+                    <div className="card flex justify-content-center"  style={{margin:"15px 0"}}>
+                        <Dropdown style={{width:"100%"}} value={selectedPriority} onChange={(e) => {
                             setSelectedPriority(e.value);
                         }}
                                   options={priorityList} optionLabel="name" placeholder="Select a Priority"
@@ -101,13 +102,15 @@ const Header = ({
                     <Calendar value={date} onChange={(e) => setDate(e.value)} showIcon/>
                 </div>
                 <div className="form-footer">
-                    <Button disabled={name === ""} onClick={() => addTask(name, description, date, selectedPriority)}
+                    <Button disabled={name === ""} onClick={() => addTask(name, "To Do", description, date, selectedPriority)}
                             label="Add"
                             severity="help" size="small"/>
                 </div>
             </Dialog>
             <div className="column-buttons">
-                <Button label="Create Column" onClick={() => setVisibleCreateColumn(true)}
+                <Button label="Create Column" onClick={() => {
+                    setVisibleCreateColumn(true)
+                }}
                         style={{marginRight: "10px"}}></Button>
                 <Dialog header="Add Column" visible={visibleCreateColumn} style={{width: '50vw'}} onHide={() => {
                     if (!visibleCreateColumn) return;
@@ -117,20 +120,21 @@ const Header = ({
                     <InputText value={columnName} onChange={(e) => setColumnName(e.target.value)}/>
                     <Button label="Add" disabled={columnName === ''} onClick={() => handleAddColumnSubmit()}></Button>
                 </Dialog>
-                <Button label="Delete Column" style={{background:"#e71d36"}} onClick={() => setVisibleDeleteColumn(true)}></Button>
+                <Button label="Delete Column" style={{background:"#e71d36"}} onClick={() =>
+                    setVisibleDeleteColumn(true)}></Button>
             </div>
 
             <Dialog header="Delete Column" visible={visibleDeleteColumn} style={{width: '50vw'}} onHide={() => {
                 if (!visibleDeleteColumn) return;
                 setVisibleDeleteColumn(false);
             }}>
-                {columns.map((column, index) => (
+                {columns.map((column) => (
                     <Button
-                        key={index}
-                        disabled={column === "To Do"}
+                        key={column.id}
+                        disabled={column.name === "To Do"}
                         style={selectedColumnList.includes(column) ? {background: "red"} : {background: "purple"}}
                         onClick={() => updateDeleteColumnList(column)}
-                    >{column}</Button>)
+                    >{column.name}</Button>)
                 )}
                 <Button
                     label="Delete"

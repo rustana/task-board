@@ -23,7 +23,6 @@ const InfoCard = ({item, updateTask, selectedTask, setSelectedTask, priorityList
         updateTask(selectedTask, updatedTask);
         setSelectedTask(null)
     }
-    console.log(item)
 
     return (
         <>
@@ -41,9 +40,10 @@ const InfoCard = ({item, updateTask, selectedTask, setSelectedTask, priorityList
                         <label htmlFor="task-description">Description</label>
                         <InputTextarea value={updatedTask.description}
                                        onChange={(e) => setUpdatedTask({...updatedTask, description: e.target.value})}/>
-                        <label htmlFor="task-due-date">Due Date</label>
-                        <div className="card flex justify-content-center">
-                            <Dropdown value={updatedTask.priority}  onChange={(e) => {
+
+                        <div className="card flex justify-content-center" style={{margin:"15px 0"}}>
+
+                            <Dropdown style={{width: "100%"}} value={updatedTask.priority} onChange={(e) => {
                                 setSelectedPriority(e.value)
                                 console.log("selectedPriority", e.value)
                                 setUpdatedTask({...updatedTask, priority: e.value})
@@ -58,14 +58,20 @@ const InfoCard = ({item, updateTask, selectedTask, setSelectedTask, priorityList
 
                             />
                         </div>
+                        <label htmlFor="task-due-date">Due Date</label>
                         <Calendar value={updatedTask.date}
                                   onChange={(e) => setUpdatedTask({...updatedTask, date: e.value})} showIcon/>
 
                         <div style={{textAlign: "center"}}>
 
-                            <Button label="Save Changes" onClick={() => handleSaveClicked()} style={{margin: "10px"}}></Button>
-                            <Button label="Delete Task"  style={{margin: "10px", background:"#e71d36"}}
-                               onClick={(e) => {deleteTask(item); setSelectedTask(false)}}/>
+                            <Button label="Save Changes" onClick={() => handleSaveClicked()}
+                                    style={{margin: "10px"}}></Button>
+                            <Button label="Delete Task" style={{margin: "10px", background: "#e71d36"}}
+                                    onClick={(e) => {
+                                        deleteTask(item.id);
+                                        console.log(item.id)
+                                        setSelectedTask(false)
+                                    }}/>
                         </div>
                     </div>)}
             </Dialog>

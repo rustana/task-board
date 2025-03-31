@@ -92,8 +92,7 @@ i {
     width: 300px;
 }
 
-.card {
-
+.container {
     height: auto;
     padding: 20px;
     display:flex;
