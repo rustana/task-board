@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Column from "./Column";
 import Header from "./Header";
-import {closestCenter, closestCorners, DndContext, useDroppable} from "@dnd-kit/core";
+import {closestCenter, closestCorners, DndContext, rectIntersection, useDroppable} from "@dnd-kit/core";
 import {arrayMove} from "@dnd-kit/sortable";
 
 
@@ -55,9 +55,10 @@ const Board = () => {
 
     const handleDragEnd = (event, status) => {
         const { active, over } = event;
-        console.log(active.id)
-        console.log(over.id)
-        if (active.id !== over.id) {
+        // console.log(active.id)
+        // console.log(over.id)
+        if (active.id !== over?.id) {
+            // handle drag logic
             const activeTask = list.find(task => task.id === active.id);
             const overTask = list.find(task => task.id === over.id);
 

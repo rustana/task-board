@@ -10,6 +10,7 @@ import {ChevronDownIcon} from "primereact/icons/chevrondown";
 
 const InfoCard = ({item, updateTask, selectedTask, setSelectedTask, priorityList, priorityOptionTemplate, selectedPriorityTemplate, deleteTask}) => {
     const [updatedTask, setUpdatedTask]=useState({...item})
+    const [buttonEditClicked, setButtonEditClicked]=useState(false)
     const [selectedPriority, setSelectedPriority] = useState(null)
 
     useEffect(() => {
@@ -23,7 +24,11 @@ const InfoCard = ({item, updateTask, selectedTask, setSelectedTask, priorityList
         updateTask(selectedTask, updatedTask);
         setSelectedTask(null)
     }
-
+const editTask=()=>{
+    console.log("jo")
+        setButtonEditClicked(true)
+    console.log(buttonEditClicked)
+}
     return (
         <>
             {/*<i className='pi pi-info' style={{color: 'white'}} onClick={() => setSelectedTask(item)}/>*/}
@@ -36,16 +41,20 @@ const InfoCard = ({item, updateTask, selectedTask, setSelectedTask, priorityList
                     <div className="new-task-form">
                         <label htmlFor="task-name">Task name</label>
                         <InputText value={updatedTask.name}
+                                   disabled={!buttonEditClicked}
                                    onChange={(e) => setUpdatedTask({...updatedTask, name: e.target.value})}/>
                         <label htmlFor="task-description">Description</label>
                         <InputTextarea value={updatedTask.description}
+                                       disabled={!buttonEditClicked}
                                        onChange={(e) => setUpdatedTask({...updatedTask, description: e.target.value})}/>
 
                         <div className="card flex justify-content-center" style={{margin:"15px 0"}}>
 
-                            <Dropdown style={{width: "100%"}} value={updatedTask.priority} onChange={(e) => {
+                            <Dropdown style={{width: "100%"}}
+                                      value={updatedTask.priority}
+                                      disabled={!buttonEditClicked}
+                                      onChange={(e) => {
                                 setSelectedPriority(e.value)
-                                console.log("selectedPriority", e.value)
                                 setUpdatedTask({...updatedTask, priority: e.value})
                             }}
                                       options={priorityList} optionLabel="name" placeholder="Select a Priority"
@@ -60,18 +69,15 @@ const InfoCard = ({item, updateTask, selectedTask, setSelectedTask, priorityList
                         </div>
                         <label htmlFor="task-due-date">Due Date</label>
                         <Calendar value={updatedTask.date}
+                                  disabled={!buttonEditClicked}
                                   onChange={(e) => setUpdatedTask({...updatedTask, date: e.value})} showIcon/>
 
                         <div style={{textAlign: "center"}}>
 
-                            <Button label="Save Changes" onClick={() => handleSaveClicked()}
+                            <Button label={!buttonEditClicked?"Edit Task":"Save Changes"} onClick={() => {
+                                !buttonEditClicked?editTask():handleSaveClicked()
+                            }}
                                     style={{margin: "10px"}}></Button>
-                            <Button label="Delete Task" style={{margin: "10px", background: "#e71d36"}}
-                                    onClick={(e) => {
-                                        deleteTask(item.id);
-                                        console.log(item.id)
-                                        setSelectedTask(false)
-                                    }}/>
                         </div>
                     </div>)}
             </Dialog>

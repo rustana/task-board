@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Card from "./Card";
 import InfoCard from "./InfoCard";
-import {rectSortingStrategy, SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
+import {SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
 import {useDroppable} from "@dnd-kit/core";
 
 const Column = ({
@@ -41,33 +41,25 @@ const Column = ({
     return (
         <div className="column" ref={setNodeRef}>
             <h1>{header.toUpperCase()}</h1>
-            <SortableContext items={list.map(task => task.id)} strategy={verticalListSortingStrategy}>
-                <div className="container" >
-                    <div className="list-line" >
+            <SortableContext items={list.filter(task => task.status === header).map(task => task.id)} strategy={verticalListSortingStrategy}>
                         {list.filter(item=>item.status===header).map(item => (
                                 <Card item={item}
-                                      id={item.id}
-                                      setSelectedTask={setSelectedTask}
                                       key={item.id}
+                                      setSelectedTask={setSelectedTask}
                                 />
-                            )
-                        )}
-                        {
-                            selectedTask && (
-                                <InfoCard
-                                    item={selectedTask}
-                                    updateTask={updateTask}
-                                    selectedTask={selectedTask}
-                                    setSelectedTask={setSelectedTask}
-                                    priorityList={priorityList}
-                                    selectedPriorityTemplate={selectedPriorityTemplate}
-                                    priorityOptionTemplate={priorityOptionTemplate}
-                                    deleteTask={deleteTask}
-                                />
-                            )}
-
-                    </div>
-                </div>
+                                ))}
+                                {selectedTask && (
+                                        <InfoCard
+                                            item={selectedTask}
+                                            updateTask={updateTask}
+                                            selectedTask={selectedTask}
+                                            setSelectedTask={setSelectedTask}
+                                            priorityList={priorityList}
+                                            selectedPriorityTemplate={selectedPriorityTemplate}
+                                            priorityOptionTemplate={priorityOptionTemplate}
+                                            deleteTask={deleteTask}
+                                        />
+                                    )}
             </SortableContext>
         </div>
     );
