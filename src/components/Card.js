@@ -1,30 +1,81 @@
-import React from 'react';
-             import { useSortable } from "@dnd-kit/sortable";
-             import { CSS } from "@dnd-kit/utilities";
-import {useDraggable} from "@dnd-kit/core";
+import React, { useState } from 'react';
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { Dialog } from "primereact/dialog";
+import { Button } from "primereact/button";
 
-             const Card = ({ item, setSelectedTask }) => {
-                 const { attributes, listeners, setNodeRef, transform } = useDraggable({
-                     id: item.id
-                 });
+const Card = ({ item, setSelectedTask, id, deleteTask }) => {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+    } = useSortable({ id });
+    const [deleteClicked, setDeleteClicked] = useState(false);
 
-                 const style = {
-                     transform: CSS.Transform.toString(transform),
-                     // transition: transition || "transform 0.25s ease",
-                     border: `1px solid ${item.color ? item.color : "#ddd"}`,
-                 };
 
-                 return (
-                     <div className="list-line" ref={setNodeRef} style={style} {...attributes} {...listeners}>
-                         <div className="list-item">
-                             {item.name}
-                         </div>
-                         <div className="icons-container">
-                             <i className="pi pi-align-justify" onClick={() => setSelectedTask(item)}></i>
-                             <i className="pi pi-trash"></i>
-                         </div>
-                     </div>
-                 );
-             };
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        border: `1px solid ${item.color || "#ddd"}`,
+        borderRadius: "5px",
+    };
 
-             export default Card;
+    return (
+        <div className="list-line"   style={style}>
+            <div className="list-item" ref={setNodeRef}
+
+                 {...attributes}
+                 {...listeners}>
+                {item.name}
+                <i
+                    className="pi pi-align-justify"
+                    onDoubleClick={() => {
+                        setSelectedTask(item);
+                    }}
+                    style={{cursor: "pointer"}}
+                ></i>
+                <i
+                    className="pi pi-trash"
+                    onDoubleClick={() => {
+                        setDeleteClicked(true);
+                    }}
+                    style={{cursor: "pointer"}}
+                ></i>
+                {/*</div>*/}
+
+            </div>
+            {/*<div className="icons-container" style={{display: "flex", gap: "10px"}}>*/}
+            {deleteClicked && (
+                <Dialog
+                    onHide={() => setDeleteClicked(false)}
+                    header="Confirm"
+                    visible={deleteClicked}
+                    style={{ width: '30vw' }}
+                >
+                    <Button
+                        label="Delete"
+                        icon="pi pi-check"
+                        style={{ background: "red" }}
+                        onClick={() => {
+                            deleteTask(item);
+                            setDeleteClicked(false);
+                        }}
+                    />
+                    <Button
+                        label="Cancel"
+                        icon="pi pi-times"
+                        style={{ background: "green" }}
+                        onClick={() =>
+                            setDeleteClicked(false)
+                        }
+                    />
+                </Dialog>
+            )}
+
+
+
+        </div>
+    );
+};
+
+export default Card;

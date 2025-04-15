@@ -55,32 +55,24 @@ const Board = () => {
 
     const handleDragEnd = (event, status) => {
         const { active, over } = event;
-        // console.log(active.id)
-        // console.log(over.id)
         if (active.id !== over?.id) {
-            // handle drag logic
             const activeTask = list.find(task => task.id === active.id);
             const overTask = list.find(task => task.id === over.id);
-
-            console.log(activeTask)
             if (activeTask&&overTask) {
                 if(activeTask.status!==overTask.status){
                     const overColumn = list.filter(task=>task.id===over.id)[0].status
                     const updatedTasks = list.map(task =>
                         task.id === active.id ? {...task, status: overColumn} : task
                     );
-                    console.log(updatedTasks)
                     setList(updatedTasks);
                 }
                else {
                     const oldIndex = list.findIndex((item) => item.id === active.id);
                     const newIndex = list.findIndex((item) => item.id === over.id);
-
                     setList((items) => arrayMove(items, oldIndex, newIndex));
                 }
             }
             if (overTask===undefined){
-                console.log("here")
                 const updatedTasks = list.map(task =>
                     task.id === active.id ? {...task, status: over.id} : task)
                 setList(updatedTasks)

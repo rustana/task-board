@@ -42,6 +42,7 @@ body {
 
 .list-line{
     padding:10px;
+    width: 100%;
 }
 .list-line span {
     margin-left: auto;
@@ -95,12 +96,12 @@ body {
 /*    flex-direction: column;*/
 /*    gap:10px*/
 /*}*/
-.icons-container{
-    text-align: start;
-}
-.icons-container i{
-    margin:5px
-}
+/*.icons-container{*/
+/*    text-align: start;*/
+/*}*/
+/*.icons-container i{*/
+/*    margin:5px*/
+/*}*/
 
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',

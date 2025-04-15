@@ -25,7 +25,6 @@ const InfoCard = ({item, updateTask, selectedTask, setSelectedTask, priorityList
         setSelectedTask(null)
     }
 const editTask=()=>{
-    console.log("jo")
         setButtonEditClicked(true)
     console.log(buttonEditClicked)
 }
@@ -35,7 +34,9 @@ const editTask=()=>{
             <Dialog header="Task Info"
                     style={{width: '30vw'}}
                     visible={!!selectedTask}
-                    onHide={() => setSelectedTask(null)}
+                    onHide={() => {
+                        setSelectedTask(null); setButtonEditClicked(false)
+                    }}
             >
                 {selectedTask && (
                     <div className="new-task-form">

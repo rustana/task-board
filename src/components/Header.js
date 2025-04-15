@@ -31,7 +31,6 @@ const Header = ({
     const [description, setDescription] = useState('')
     const [selectedColumnList, setSelectedColumnList] = useState([]);
     const [selectedPriority, setSelectedPriority] = useState(null)
-    console.log(visibleDeleteColumn)
     const addTask = (name, status, description, date, priority) => {
         const newTask = {id:uuidv4(), name: name, status:"To Do",description: description, date: date, priority: priority}
         const matchedPriority = priorityList.find(priority => priority.value === newTask.priority);
@@ -112,35 +111,43 @@ const Header = ({
                     setVisibleCreateColumn(true)
                 }}
                         style={{marginRight: "10px"}}></Button>
-                <Dialog header="Add Column" visible={visibleCreateColumn} style={{width: '50vw'}} onHide={() => {
+                <Dialog header="Add Column" visible={visibleCreateColumn}  onHide={() => {
                     if (!visibleCreateColumn) return;
                     setVisibleCreateColumn(false);
                 }}>
                     <label>Name</label>
-                    <InputText value={columnName} onChange={(e) => setColumnName(e.target.value)}/>
+                    <InputText value={columnName} onChange={(e) => setColumnName(e.target.value)} style={{margin:"0 10px"}}/>
                     <Button label="Add" disabled={columnName === ''} onClick={() => handleAddColumnSubmit()}></Button>
                 </Dialog>
                 <Button label="Delete Column" style={{background:"#e71d36"}} onClick={() =>
                     setVisibleDeleteColumn(true)}></Button>
             </div>
 
-            <Dialog header="Delete Column" visible={visibleDeleteColumn} style={{width: '50vw'}} onHide={() => {
+            <Dialog header="Delete Column" visible={visibleDeleteColumn} onHide={() => {
                 if (!visibleDeleteColumn) return;
                 setVisibleDeleteColumn(false);
             }}>
-                {columns.map((column) => (
-                    <Button
-                        key={column.id}
-                        disabled={column.name === "To Do"}
-                        style={selectedColumnList.includes(column) ? {background: "red"} : {background: "purple"}}
-                        onClick={() => updateDeleteColumnList(column)}
-                    >{column.name}</Button>)
-                )}
+                <div>
+                    {columns.map((column) => (
+                        <Button
+                            key={column.id}
+                            disabled={column.name === "To Do"}
+                            style={{
+                                margin: "0 10px",
+                                background: selectedColumnList.includes(column) ? "green" : "purple"
+                            }}
+                            onClick={() => updateDeleteColumnList(column)}
+                        >{column.name}</Button>)
+                    )}
+                </div>
+                <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "10px" }}>
                 <Button
+                    style={{background: "red", marginTop: "10px"}}
                     label="Delete"
                     disabled={selectedColumnList.length === 0}
                     onClick={() => deleteSelectedColumns()}
                 />
+                </div >
                 {/*<Button label="Delete" disabled={columnName===''} onClick={()=>setVisibleDeleteColumn(false)}></Button>*/}
             </Dialog>
         </div>
