@@ -86,22 +86,22 @@ body {
     padding: 20px;
     display:flex;
     flex-direction: column;
-    gap:10px
+    gap:10px; height: 400px;
 }
 
-/*.container {*/
-/*    height: auto;*/
+.container {
+    height: auto;
 
-/*    display:flex;*/
-/*    flex-direction: column;*/
-/*    gap:10px*/
-/*}*/
-/*.icons-container{*/
-/*    text-align: start;*/
-/*}*/
-/*.icons-container i{*/
-/*    margin:5px*/
-/*}*/
+    display:flex;
+    flex-direction: column;
+    gap:10px
+}
+.icons-container{
+    text-align: start;
+}
+.icons-container i{
+    margin:5px
+}
 
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',

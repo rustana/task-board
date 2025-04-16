@@ -9,7 +9,7 @@ const Card = ({ item, setSelectedTask, id, deleteTask }) => {
         attributes,
         listeners,
         setNodeRef,
-        transform,
+        transform
     } = useSortable({ id });
     const [deleteClicked, setDeleteClicked] = useState(false);
 
@@ -18,12 +18,11 @@ const Card = ({ item, setSelectedTask, id, deleteTask }) => {
         transform: CSS.Transform.toString(transform),
         border: `1px solid ${item.color || "#ddd"}`,
         borderRadius: "5px",
-    };
+    }
 
     return (
-        <div className="list-line"   style={style}>
+        <div className="list-line"     style={style}>
             <div className="list-item" ref={setNodeRef}
-
                  {...attributes}
                  {...listeners}>
                 {item.name}
@@ -37,14 +36,12 @@ const Card = ({ item, setSelectedTask, id, deleteTask }) => {
                 <i
                     className="pi pi-trash"
                     onDoubleClick={() => {
-                        setDeleteClicked(true);
+                        setSelectedTask(item);
                     }}
                     style={{cursor: "pointer"}}
                 ></i>
-                {/*</div>*/}
 
             </div>
-            {/*<div className="icons-container" style={{display: "flex", gap: "10px"}}>*/}
             {deleteClicked && (
                 <Dialog
                     onHide={() => setDeleteClicked(false)}

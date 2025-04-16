@@ -40,39 +40,42 @@ const Column = ({
     return (
         <div className="column" ref={setNodeRef}>
             <h1>{header.toUpperCase()}</h1>
-            <SortableContext items={list.filter(task => task.status === header).map(task => task.id)} strategy={verticalListSortingStrategy}>
-                        {list.filter(item=>item.status===header).map(item => (
-                            <div style={{ display: "flex",
-                                alignItems: "center",
-
-                                gap: "10px" }}
-                                 key={item.id}>
-                                <Card
-                                    item={item}
-                                      key={item.id}
-                                      id={item.id}
-                                      setSelectedTask={setSelectedTask}
-                                      deleteTask={deleteTask}
-                                />
-
-                            </div>
+            <SortableContext items={list.filter(task => task.status === header).map(task => task.id)}
+                             strategy={verticalListSortingStrategy} >
+                {list.filter(item => item.status === header).map(item => (
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "10px"
+                        }}
+                        key={item.id}
+                    >
+                        <Card
+                            item={item}
+                            key={item.id}
+                            id={item.id}
+                            setSelectedTask={setSelectedTask}
+                            deleteTask={deleteTask}
+                        />
+                    </div>
 
                         ))}
-                {selectedTask && (
-                    <InfoCard
-                        item={selectedTask}
-                        updateTask={updateTask}
-                        selectedTask={selectedTask}
-                        setSelectedTask={setSelectedTask}
-                        priorityList={priorityList}
-                        selectedPriorityTemplate={selectedPriorityTemplate}
-                        priorityOptionTemplate={priorityOptionTemplate}
-                        deleteTask={deleteTask}
-                    />
-                                    )}
-            </SortableContext>
-        </div>
-    );
-};
+                        {selectedTask && (
+                            <InfoCard
+                                item={selectedTask}
+                                updateTask={updateTask}
+                                selectedTask={selectedTask}
+                                setSelectedTask={setSelectedTask}
+                                priorityList={priorityList}
+                                selectedPriorityTemplate={selectedPriorityTemplate}
+                                priorityOptionTemplate={priorityOptionTemplate}
+                                deleteTask={deleteTask}
+                            />
+                        )}
+                    </SortableContext>
+                    </div>
+                    );
+                };
 
-export default Column;
+                export default Column;

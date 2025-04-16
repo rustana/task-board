@@ -1,8 +1,10 @@
 import React, {useState} from 'react';
 import Column from "./Column";
 import Header from "./Header";
-import {closestCenter, closestCorners, DndContext, rectIntersection, useDroppable} from "@dnd-kit/core";
+import {closestCenter, closestCorners, DndContext, DragOverlay, rectIntersection, useDroppable} from "@dnd-kit/core";
 import {arrayMove} from "@dnd-kit/sortable";
+import Card from "./Card";
+import List from "./List";
 
 
 const Board = () => {
@@ -15,6 +17,8 @@ const Board = () => {
     const [columns, setColumns] = useState(initialColumns)
     const [visibleCreateColumn, setVisibleCreateColumn] = useState(false);
     const [visibleDeleteColumn, setVisibleDeleteColumn] = useState(false);
+    const [activeId, setActiveId] = useState(null);
+
 
 
     const priorityList = [
@@ -79,7 +83,15 @@ const Board = () => {
             }
         }
     };
+    const activeTask = list.find(task => task.id === activeId);
+    const handleDragStart = (event) => {
+        setActiveId(event.active.id);
 
+    };
+
+    const handleDragCancel = () => {
+        setActiveId(null);
+    };
     return (
         <div>
             <Header list={list}
@@ -100,7 +112,10 @@ const Board = () => {
 
                 <div className="panel">
                     <DndContext collisionDetection={closestCenter}
-                                onDragEnd={handleDragEnd}>
+                                onDragEnd={handleDragEnd}
+                                onDragStart={handleDragStart}
+                                onDragCancel={handleDragCancel}
+                    >
                     {columns.map(column =>
                         <Column
                             id={column.id}
@@ -115,8 +130,18 @@ const Board = () => {
                             priorityList={priorityList}
                             selectedPriorityTemplate={selectedPriorityTemplate}
                             priorityOptionTemplate={priorityOptionTemplate}
+
                         />
                     )}
+                        <DragOverlay style={{width:"auto"}}
+                        dropAnimation={{
+                                duration: 5,
+                               }}>
+                            {activeId ? (
+                                <List  item={activeTask}/>
+                            ): null}
+
+                        </DragOverlay>
                     </DndContext>
                 </div>
 
