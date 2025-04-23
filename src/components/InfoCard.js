@@ -16,11 +16,10 @@ const InfoCard = ({
                       priorityList,
                       priorityOptionTemplate,
                       selectedPriorityTemplate,
-                      deleteTask
+                      
                   }) => {
     const [updatedTask, setUpdatedTask] = useState({...item})
     const [buttonEditClicked, setButtonEditClicked] = useState(false)
-    const [selectedPriority, setSelectedPriority] = useState(null)
 
     useEffect(() => {
         if (selectedTask) {
@@ -65,7 +64,6 @@ const InfoCard = ({
                                       value={updatedTask.priority}
                                       disabled={!buttonEditClicked}
                                       onChange={(e) => {
-                                          setSelectedPriority(e.value)
                                           setUpdatedTask({...updatedTask, priority: e.value})
                                       }}
                                       options={priorityList} optionLabel="name" placeholder="Select a Priority"
