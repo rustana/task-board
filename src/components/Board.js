@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
 import Column from "./Column";
 import Header from "./Header";
-import {closestCenter, closestCorners, DndContext, useDroppable} from "@dnd-kit/core";
+import {closestCenter,  DndContext, DragOverlay, useSensor, useSensors, MouseSensor} from "@dnd-kit/core";
 import {arrayMove} from "@dnd-kit/sortable";
+import List from "./List";
 
 
 const Board = () => {
@@ -15,10 +16,13 @@ const Board = () => {
     const [columns, setColumns] = useState(initialColumns)
     const [visibleCreateColumn, setVisibleCreateColumn] = useState(false);
     const [visibleDeleteColumn, setVisibleDeleteColumn] = useState(false);
+    const [activeId, setActiveId] = useState(null);
+
+
 
 
     const priorityList = [
-        {name: "Critical", value: "critical", color: "#e71d36"},
+        // {name: "Critical", value: "critical", color: "#e71d36"},
         {name: "High", value: "high", color: "#fc7a57"},
         {name: "Medium", value: "medium", color: "#eefc57"},
         {name: "Low", value: "low", color: "#0cce6b"},
@@ -51,44 +55,55 @@ const Board = () => {
         setVisibleCreateColumn(false)
 
     }
-    const getTaskPosition = (id) => list.findIndex(item => item.id === id)
-
     const handleDragEnd = (event, status) => {
         const { active, over } = event;
-        console.log(active.id)
-        console.log(over.id)
-        if (active.id !== over.id) {
+        if (active.id !== over?.id) {
             const activeTask = list.find(task => task.id === active.id);
             const overTask = list.find(task => task.id === over.id);
-
-            console.log(activeTask)
             if (activeTask&&overTask) {
                 if(activeTask.status!==overTask.status){
                     const overColumn = list.filter(task=>task.id===over.id)[0].status
                     const updatedTasks = list.map(task =>
                         task.id === active.id ? {...task, status: overColumn} : task
                     );
-                    console.log(updatedTasks)
                     setList(updatedTasks);
                 }
                else {
                     const oldIndex = list.findIndex((item) => item.id === active.id);
                     const newIndex = list.findIndex((item) => item.id === over.id);
-
                     setList((items) => arrayMove(items, oldIndex, newIndex));
                 }
             }
             if (overTask===undefined){
-                console.log("here")
                 const updatedTasks = list.map(task =>
                     task.id === active.id ? {...task, status: over.id} : task)
                 setList(updatedTasks)
             }
         }
     };
+    const activeTask = list.find(task => task.id === activeId);
+
+    const handleDragStart = (event) => {
+        setActiveId(event.active.id);
+
+    };
+
+    const handleDragCancel = () => {
+        setActiveId(null);
+    };
+
+    const mouseSensor = useSensor(MouseSensor, {
+        activationConstraint: {
+            distance: 10,
+        },
+    });
+    const sensors = useSensors(
+        mouseSensor,
+    );
 
     return (
         <div>
+            <h1>TASK BOARD</h1>
             <Header list={list}
                     setList={setList}
                     columns={columns}
@@ -107,7 +122,11 @@ const Board = () => {
 
                 <div className="panel">
                     <DndContext collisionDetection={closestCenter}
-                                onDragEnd={handleDragEnd}>
+                                sensors={sensors}
+                                onDragEnd={handleDragEnd}
+                                onDragStart={handleDragStart}
+                                onDragCancel={handleDragCancel}
+                    >
                     {columns.map(column =>
                         <Column
                             id={column.id}
@@ -122,8 +141,18 @@ const Board = () => {
                             priorityList={priorityList}
                             selectedPriorityTemplate={selectedPriorityTemplate}
                             priorityOptionTemplate={priorityOptionTemplate}
+
                         />
                     )}
+                        <DragOverlay style={{width:"auto"}}
+                        dropAnimation={{
+                                duration: 5,
+                               }}>
+                            {activeId ? (
+                                <List  item={activeTask}/>
+                            ): null}
+
+                        </DragOverlay>
                     </DndContext>
                 </div>
 

@@ -1,15 +1,16 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button} from "primereact/button";
 import {Dialog} from "primereact/dialog";
+import {Message} from 'primereact/message';
+
 import {InputText} from "primereact/inputtext";
 import {InputTextarea} from "primereact/inputtextarea";
-import {RadioButton} from "primereact/radiobutton";
 import {Calendar} from "primereact/calendar";
-import column from "./Column";
 import {Dropdown} from "primereact/dropdown";
 import {ChevronRightIcon} from "primereact/icons/chevronright";
 import {ChevronDownIcon} from "primereact/icons/chevrondown";
 import {v4 as uuidv4} from 'uuid';
+
 const Header = ({
                     list,
                     setList,
@@ -31,14 +32,20 @@ const Header = ({
     const [description, setDescription] = useState('')
     const [selectedColumnList, setSelectedColumnList] = useState([]);
     const [selectedPriority, setSelectedPriority] = useState(null)
-    console.log(visibleDeleteColumn)
     const addTask = (name, status, description, date, priority) => {
-        const newTask = {id:uuidv4(), name: name, status:"To Do",description: description, date: date, priority: priority}
+        const newTask = {
+            id: uuidv4(),
+            name: name,
+            status: "To Do",
+            description: description,
+            date: date,
+            priority: priority
+        }
         const matchedPriority = priorityList.find(priority => priority.value === newTask.priority);
         const updatedTask =
-        matchedPriority!==undefined
-            ?{...newTask,color:matchedPriority.color}
-            :{...newTask}
+            matchedPriority !== undefined
+                ? {...newTask, color: matchedPriority.color}
+                : {...newTask}
         setList([...list, updatedTask])
         setName("")
         setDate("")
@@ -48,28 +55,40 @@ const Header = ({
         console.log(updatedTask)
     }
     const handleAddColumnSubmit = () => {
-        addColumn({id:uuidv4,name:columnName})
+        addColumn({id: uuidv4, name: columnName})
         setVisibleCreateColumn(false)
         setColumnName("")
     }
+    const checkIfColumnHasTask = (columnName) => {
+        // const result=
+        return list.filter(task => task.status === columnName.name).length > 0
+        // const res = list.filter(task=>task.status===columnName.name)[0].status
+        // console.log(result)
+        // console.log(res)
+    }
+    const getSelectedColumnsWithTasks=()=> {
+        const newList = [...new Set(list.filter(task => task.status !== "To Do").map(item => item.status))];
+        console.log(selectedColumnList.filter(el=>newList.includes(el)))
+        return  selectedColumnList.filter(el=>newList.includes(el))
+    }
 
-    const updateDeleteColumnList = (columnName) => {
-        console.log(columnName)
-        console.log(selectedColumnList)
-        if (selectedColumnList.some(col=>col.name===columnName.name)) {
-            const updated = selectedColumnList.filter(column => column !== columnName)
+
+    const updateDeleteColumnList = (column) => {
+//unselect
+        if (selectedColumnList.includes(column)) {
+            const updated = selectedColumnList.filter(col => col !== column)
             setSelectedColumnList(updated)
-
+//select
         } else {
-            const updated = [...selectedColumnList, columnName]
+            const updated = [...selectedColumnList, column]
             setSelectedColumnList(updated)
         }
     }
     const deleteSelectedColumns = () => {
-        const updated = columns.filter(column => selectedColumnList.includes(column) === false)
-        setSelectedColumnList([])
+        const updated = columns.filter(column => selectedColumnList.includes(column.name) === false)
         setColumns(updated)
         setVisibleDeleteColumn(false)
+        setSelectedColumnList([])
     }
 
     return (
@@ -84,8 +103,8 @@ const Header = ({
                     <InputText value={name} onChange={(e) => setName(e.target.value)}/>
                     <label htmlFor="task-description">Description</label>
                     <InputTextarea value={description} onChange={(e) => setDescription(e.target.value)}/>
-                    <div className="card flex justify-content-center"  style={{margin:"15px 0"}}>
-                        <Dropdown style={{width:"100%"}} value={selectedPriority} onChange={(e) => {
+                    <div className="card flex justify-content-center" style={{margin: "15px 0"}}>
+                        <Dropdown style={{width: "100%"}} value={selectedPriority} onChange={(e) => {
                             setSelectedPriority(e.value);
                         }}
                                   options={priorityList} optionLabel="name" placeholder="Select a Priority"
@@ -102,7 +121,8 @@ const Header = ({
                     <Calendar value={date} onChange={(e) => setDate(e.value)} showIcon/>
                 </div>
                 <div className="form-footer">
-                    <Button disabled={name === ""} onClick={() => addTask(name, "To Do", description, date, selectedPriority)}
+                    <Button disabled={name === ""}
+                            onClick={() => addTask(name, "To Do", description, date, selectedPriority)}
                             label="Add"
                             severity="help" size="small"/>
                 </div>
@@ -112,36 +132,61 @@ const Header = ({
                     setVisibleCreateColumn(true)
                 }}
                         style={{marginRight: "10px"}}></Button>
-                <Dialog header="Add Column" visible={visibleCreateColumn} style={{width: '50vw'}} onHide={() => {
+                <Dialog header="Add Column" visible={visibleCreateColumn} onHide={() => {
                     if (!visibleCreateColumn) return;
                     setVisibleCreateColumn(false);
                 }}>
                     <label>Name</label>
-                    <InputText value={columnName} onChange={(e) => setColumnName(e.target.value)}/>
+                    <InputText value={columnName} onChange={(e) => setColumnName(e.target.value)}
+                               style={{margin: "0 10px"}}/>
                     <Button label="Add" disabled={columnName === ''} onClick={() => handleAddColumnSubmit()}></Button>
                 </Dialog>
-                <Button label="Delete Column" style={{background:"#e71d36"}} onClick={() =>
+                <Button label="Delete Column" style={{background: "#e71d36"}} onClick={() =>
                     setVisibleDeleteColumn(true)}></Button>
             </div>
 
-            <Dialog header="Delete Column" visible={visibleDeleteColumn} style={{width: '50vw'}} onHide={() => {
+            <Dialog header="Delete Column" visible={visibleDeleteColumn} onHide={() => {
                 if (!visibleDeleteColumn) return;
-                setVisibleDeleteColumn(false);
+                setVisibleDeleteColumn(false)
+                setSelectedColumnList([])
+                ;
             }}>
-                {columns.map((column) => (
+                <div>
+                    {columns.map((column) => {
+                        return (
+                            <>
+                                <Button
+                                    disabled={column.name === "To Do"}
+                                    style={{
+                                        margin: "0 10px",
+                                        background: selectedColumnList.includes(column.name) ? "#4B0082" : "#865BA4"
+                                    }}
+                                    onClick={() => {
+                                        updateDeleteColumnList(column.name);
+                                    }}
+                                >
+                                    {column.name}
+                                </Button>
+                            </>
+                    );
+                    })}
+                    {getSelectedColumnsWithTasks().length>0&&
+                        <div style={{marginTop: "1rem"}}>
+                                   <Message
+                                            severity="warn"
+                                            text={`Warning: There are tasks in the ${getSelectedColumnsWithTasks().join(", ")} column(s). Are you sure you want to delete them?` } />
+                                    </div>
+                    }
+                </div>
+
+                <div style={{display: "flex", justifyContent: "flex-end", marginTop: "10px"}}>
                     <Button
-                        key={column.id}
-                        disabled={column.name === "To Do"}
-                        style={selectedColumnList.includes(column) ? {background: "red"} : {background: "purple"}}
-                        onClick={() => updateDeleteColumnList(column)}
-                    >{column.name}</Button>)
-                )}
-                <Button
-                    label="Delete"
-                    disabled={selectedColumnList.length === 0}
-                    onClick={() => deleteSelectedColumns()}
-                />
-                {/*<Button label="Delete" disabled={columnName===''} onClick={()=>setVisibleDeleteColumn(false)}></Button>*/}
+                        style={{background: "red", marginTop: "10px"}}
+                        label="Delete"
+                        disabled={selectedColumnList.length === 0}
+                        onClick={() => deleteSelectedColumns()}
+                    />
+                </div>
             </Dialog>
         </div>
     );
