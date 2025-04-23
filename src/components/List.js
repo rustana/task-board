@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
 
-const List = ({ item, setSelectedTask, id, deleteTask }) => {
+const List = ({ item}) => {
 
 
 

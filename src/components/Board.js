@@ -55,7 +55,7 @@ const Board = () => {
         setVisibleCreateColumn(false)
 
     }
-    const handleDragEnd = (event, status) => {
+    const handleDragEnd = (event) => {
         const { active, over } = event;
         if (active.id !== over?.id) {
             const activeTask = list.find(task => task.id === active.id);

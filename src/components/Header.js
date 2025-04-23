@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Button} from "primereact/button";
 import {Dialog} from "primereact/dialog";
 import {Message} from 'primereact/message';
@@ -59,16 +59,8 @@ const Header = ({
         setVisibleCreateColumn(false)
         setColumnName("")
     }
-    const checkIfColumnHasTask = (columnName) => {
-        // const result=
-        return list.filter(task => task.status === columnName.name).length > 0
-        // const res = list.filter(task=>task.status===columnName.name)[0].status
-        // console.log(result)
-        // console.log(res)
-    }
     const getSelectedColumnsWithTasks=()=> {
         const newList = [...new Set(list.filter(task => task.status !== "To Do").map(item => item.status))];
-        console.log(selectedColumnList.filter(el=>newList.includes(el)))
         return  selectedColumnList.filter(el=>newList.includes(el))
     }
 
