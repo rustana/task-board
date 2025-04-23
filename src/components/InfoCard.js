@@ -8,26 +8,35 @@ import {Dropdown} from "primereact/dropdown";
 import {ChevronRightIcon} from "primereact/icons/chevronright";
 import {ChevronDownIcon} from "primereact/icons/chevrondown";
 
-const InfoCard = ({item, updateTask, selectedTask, setSelectedTask, priorityList, priorityOptionTemplate, selectedPriorityTemplate, deleteTask}) => {
-    const [updatedTask, setUpdatedTask]=useState({...item})
-    const [buttonEditClicked, setButtonEditClicked]=useState(false)
+const InfoCard = ({
+                      item,
+                      updateTask,
+                      selectedTask,
+                      setSelectedTask,
+                      priorityList,
+                      priorityOptionTemplate,
+                      selectedPriorityTemplate,
+                      deleteTask
+                  }) => {
+    const [updatedTask, setUpdatedTask] = useState({...item})
+    const [buttonEditClicked, setButtonEditClicked] = useState(false)
     const [selectedPriority, setSelectedPriority] = useState(null)
 
     useEffect(() => {
         if (selectedTask) {
-            setUpdatedTask({ ...selectedTask });
+            setUpdatedTask({...selectedTask});
         }
     }, [selectedTask]);
 
 
-    const handleSaveClicked=()=>{
+    const handleSaveClicked = () => {
         updateTask(selectedTask, updatedTask);
         setSelectedTask(null)
     }
-const editTask=()=>{
+    const editTask = () => {
         setButtonEditClicked(true)
-    console.log(buttonEditClicked)
-}
+        console.log(buttonEditClicked)
+    }
     return (
         <>
             {/*<i className='pi pi-info' style={{color: 'white'}} onClick={() => setSelectedTask(item)}/>*/}
@@ -35,7 +44,8 @@ const editTask=()=>{
                     style={{width: '30vw'}}
                     visible={!!selectedTask}
                     onHide={() => {
-                        setSelectedTask(null); setButtonEditClicked(false)
+                        setSelectedTask(null);
+                        setButtonEditClicked(false)
                     }}
             >
                 {selectedTask && (
@@ -49,15 +59,15 @@ const editTask=()=>{
                                        disabled={!buttonEditClicked}
                                        onChange={(e) => setUpdatedTask({...updatedTask, description: e.target.value})}/>
 
-                        <div className="card flex justify-content-center" style={{margin:"15px 0"}}>
+                        <div className="card flex justify-content-center" style={{margin: "15px 0"}}>
 
                             <Dropdown style={{width: "100%"}}
                                       value={updatedTask.priority}
                                       disabled={!buttonEditClicked}
                                       onChange={(e) => {
-                                setSelectedPriority(e.value)
-                                setUpdatedTask({...updatedTask, priority: e.value})
-                            }}
+                                          setSelectedPriority(e.value)
+                                          setUpdatedTask({...updatedTask, priority: e.value})
+                                      }}
                                       options={priorityList} optionLabel="name" placeholder="Select a Priority"
                                       valueTemplate={selectedPriorityTemplate} itemTemplate={priorityOptionTemplate}
                                       dropdownIcon={(opts) => {
@@ -75,10 +85,11 @@ const editTask=()=>{
 
                         <div style={{textAlign: "center"}}>
 
-                            <Button label={!buttonEditClicked?"Edit Task":"Save Changes"} onClick={() => {
-                                !buttonEditClicked?editTask():handleSaveClicked()
-                            }}
-                                    style={{margin: "10px"}}></Button>
+                            <Button label={!buttonEditClicked ? "Edit Task" : "Save Changes"} style={{marginTop:"20px",background:buttonEditClicked? "#4B9A1B":"#bf00ff"}}
+                                    onClick={() => {
+                                        !buttonEditClicked ? editTask() : handleSaveClicked()
+                                    }}
+                            ></Button>
                         </div>
                     </div>)}
             </Dialog>

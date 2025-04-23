@@ -1,9 +1,8 @@
 import React, {useState} from 'react';
 import Column from "./Column";
 import Header from "./Header";
-import {closestCenter, closestCorners, DndContext, DragOverlay, rectIntersection, useDroppable} from "@dnd-kit/core";
+import {closestCenter,  DndContext, DragOverlay, useSensor, useSensors, MouseSensor} from "@dnd-kit/core";
 import {arrayMove} from "@dnd-kit/sortable";
-import Card from "./Card";
 import List from "./List";
 
 
@@ -21,8 +20,9 @@ const Board = () => {
 
 
 
+
     const priorityList = [
-        {name: "Critical", value: "critical", color: "#e71d36"},
+        // {name: "Critical", value: "critical", color: "#e71d36"},
         {name: "High", value: "high", color: "#fc7a57"},
         {name: "Medium", value: "medium", color: "#eefc57"},
         {name: "Low", value: "low", color: "#0cce6b"},
@@ -55,8 +55,6 @@ const Board = () => {
         setVisibleCreateColumn(false)
 
     }
-    const getTaskPosition = (id) => list.findIndex(item => item.id === id)
-
     const handleDragEnd = (event, status) => {
         const { active, over } = event;
         if (active.id !== over?.id) {
@@ -84,6 +82,7 @@ const Board = () => {
         }
     };
     const activeTask = list.find(task => task.id === activeId);
+
     const handleDragStart = (event) => {
         setActiveId(event.active.id);
 
@@ -92,8 +91,19 @@ const Board = () => {
     const handleDragCancel = () => {
         setActiveId(null);
     };
+
+    const mouseSensor = useSensor(MouseSensor, {
+        activationConstraint: {
+            distance: 10,
+        },
+    });
+    const sensors = useSensors(
+        mouseSensor,
+    );
+
     return (
         <div>
+            <h1>TASK BOARD</h1>
             <Header list={list}
                     setList={setList}
                     columns={columns}
@@ -112,6 +122,7 @@ const Board = () => {
 
                 <div className="panel">
                     <DndContext collisionDetection={closestCenter}
+                                sensors={sensors}
                                 onDragEnd={handleDragEnd}
                                 onDragStart={handleDragStart}
                                 onDragCancel={handleDragCancel}

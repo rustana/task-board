@@ -25,30 +25,32 @@ const Card = ({ item, setSelectedTask, id, deleteTask }) => {
             <div className="list-item" ref={setNodeRef}
                  {...attributes}
                  {...listeners}>
-                {item.name}
+               <span className="label">{item.name}</span>
                 <i
                     className="pi pi-align-justify"
-                    onDoubleClick={() => {
+                    onClick={() => {
                         setSelectedTask(item);
                     }}
                     style={{cursor: "pointer"}}
                 ></i>
                 <i
                     className="pi pi-trash"
-                    onDoubleClick={() => {
-                        setSelectedTask(item);
+                    onClick={() => {
+                        setDeleteClicked(true);
                     }}
                     style={{cursor: "pointer"}}
                 ></i>
 
             </div>
             {deleteClicked && (
+                <div  style={{ display: "flex", flexDirection: "column", justifyContent:"center", width: '30vw' }}>
                 <Dialog
                     onHide={() => setDeleteClicked(false)}
                     header="Confirm"
                     visible={deleteClicked}
-                    style={{ width: '30vw' }}
+
                 >
+                    <div >
                     <Button
                         label="Delete"
                         icon="pi pi-check"
@@ -66,7 +68,9 @@ const Card = ({ item, setSelectedTask, id, deleteTask }) => {
                             setDeleteClicked(false)
                         }
                     />
+                    </div>
                 </Dialog>
+                </div>
             )}
 
 

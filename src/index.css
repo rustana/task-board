@@ -15,7 +15,13 @@ body {
     align-items: center;
     width:100%;
 }
-
+.list-item .label {
+    flex: 0 0 80%;
+    text-align: left;
+}
+.list-item i {
+    margin-left: 10px; /* optional spacing between icons */
+}
 .new-task-form {
     display: flex;
     flex-direction: column;
@@ -86,7 +92,8 @@ body {
     padding: 20px;
     display:flex;
     flex-direction: column;
-    gap:10px; height: 400px;
+    gap:10px;
+    /*height: 400px;*/
 }
 
 .container {
